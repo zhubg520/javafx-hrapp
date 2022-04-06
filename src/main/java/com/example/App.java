@@ -120,6 +120,7 @@ public class App extends Application {
             if (tableSelectIndex != -1) {
                 hrApp.remove(tableSelectIndex);
             }
+            romoveButton.setDisable(true);
         });
 
         TableView<Employee> table = new TableView<>();
