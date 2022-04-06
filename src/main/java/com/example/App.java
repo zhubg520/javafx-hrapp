@@ -3,6 +3,7 @@ package com.example;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -828,7 +829,7 @@ public class App extends Application {
         MenuItem menuItem1 = new MenuItem("Search");
         MenuItem menuItem2 = new MenuItem("Exit");
         menuItem1.setOnAction(evt -> searchEventHandler.eventProcess(evt));
-        menuItem2.setOnAction(evt -> stage.close());
+        menuItem2.setOnAction(evt -> Platform.exit());
         mainMenu.getItems().add(menuItem1);
         mainMenu.getItems().add(menuItem2);
 
