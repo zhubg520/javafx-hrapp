@@ -137,6 +137,20 @@ public class App extends Application {
             hrApp.update(evt.getRowValue().getId(), temp);
             table.refresh();
         });
+
+        TableColumn<Employee, String> sexCol = new TableColumn<>("Sex");
+        sexCol.setCellValueFactory(new PropertyValueFactory<>("sex"));
+        sexCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        sexCol.setCellFactory(ComboBoxTableCell.forTableColumn(Employee.SEX));
+
+        sexCol.setOnEditCommit(evt -> {
+            System.out.println("evt.getNewValue(): "+ evt.getNewValue());
+            Employee temp = evt.getRowValue();
+            temp.setName(evt.getNewValue());
+            hrApp.update(evt.getRowValue().getId(), temp);
+            table.refresh();
+        });
+
         TableColumn<Employee, String> typeCol = new TableColumn<>("Type");
         typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
 
@@ -252,7 +266,7 @@ public class App extends Application {
             table.refresh();
         });
 
-        table.getColumns().addAll(idCol, nameCol, typeCol, roleCol, phoneCol, ageCol, salaryCol, addressCol);
+        table.getColumns().addAll(idCol, nameCol, sexCol, typeCol, roleCol, phoneCol, ageCol, salaryCol, addressCol);
 
         Doctor doctor = new Doctor(1, "John", "Male", 31, "1011", 20000.00, "Sheffield",
                 "Family physicians", "Registrars");
