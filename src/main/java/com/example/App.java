@@ -2,12 +2,13 @@ package com.example;
 
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
-
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -31,6 +32,10 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
+
+interface CommonEventHandler {
+    void eventProcess(ActionEvent e);
+}
 
 class IDCell<S, T> implements Callback<TableColumn<S, T>, TableCell<S, T>> {
 
@@ -397,113 +402,72 @@ public class App extends Application {
                 vbox.setAlignment(Pos.CENTER);
                 vbox.getChildren().addAll(tipBox1, label, nameBox, sexBox, phoneBox, ageBox, addressBox, salaryBox);
 
+                CommonEventHandler registerButtonActionProcess = ev -> {
+                    System.out.println("Name: " + nameTextField.getText());
+                    System.out.println("Phone: " + phoneTextField.getText());
+                    System.out.println("Age: " + Integer.parseInt(ageField.getText()));
+                    System.out.println("Address: " + addressTextField.getText());
+                    System.out.println("Salary: " + Double.parseDouble(salaryField.getText()));
+                    System.out.println("Role: " + roleCb.getValue());
+                    System.out.println("Type: " + typeCb.getValue());
+                    if (nameTextField.getText().trim().isEmpty()) {
+                        tipTextField1.setStyle("-fx-text-fill: red;");
+                        tipTextField1.setText("Error, name can not be null.");
+                    }else if (sexCb.getValue() == null) {
+                        tipTextField1.setStyle("-fx-text-fill: red;");
+                        tipTextField1.setText("Error, sex can not be null.");
+                    } else if (phoneTextField.getText().trim().isEmpty()) {
+                        tipTextField1.setStyle("-fx-text-fill: red;");
+                        tipTextField1.setText("Error, phone can not be null.");
+                    } else if (addressTextField.getText().trim().isEmpty()) {
+                        tipTextField1.setStyle("-fx-text-fill: red;");
+                        tipTextField1.setText("Error, address can not be null.");
+                    } else if (roleCb.getValue() == null && cb.getValue() != "Staff") {
+                        tipTextField1.setStyle("-fx-text-fill: red;");
+                        tipTextField1.setText("Error, role can not be null.");
+                    } else if (typeCb.getValue() == null) {
+                        tipTextField1.setStyle("-fx-text-fill: red;");
+                        tipTextField1.setText("Error, type can not be null.");
+                    } else {
+                        if (cb.getValue() == "Doctor") {
+                            hrApp.add(new Doctor(0, nameTextField.getText(), sexCb.getValue(),
+                                    Integer.parseInt(ageField.getText()), phoneTextField.getText(),
+                                    Double.parseDouble(salaryField.getText()), addressTextField.getText(),
+                                    roleCb.getValue(), typeCb.getValue()));
+                        } else if (cb.getValue() == "Nurse") {
+                            hrApp.add(new Nurse(0, nameTextField.getText(), sexCb.getValue(),
+                                    Integer.parseInt(ageField.getText()), phoneTextField.getText(),
+                                    Double.parseDouble(salaryField.getText()), addressTextField.getText(),
+                                    roleCb.getValue(), typeCb.getValue()));
+                        } else if (cb.getValue() == "Staff") {
+                            hrApp.add(new Staff(0, nameTextField.getText(), sexCb.getValue(),
+                                    Integer.parseInt(ageField.getText()), phoneTextField.getText(),
+                                    Double.parseDouble(salaryField.getText()), addressTextField.getText(),
+                                    typeCb.getValue()));
+                        }
+
+                        secondStage.close();
+                    }
+
+                };
+
                 if (cb.getValue() == "Doctor") {
                     label.setText("Doctor");
                     typeCb.setItems(FXCollections.observableArrayList(Doctor.TYPES));
                     roleCb.setItems(FXCollections.observableArrayList(Doctor.ROLES));
                     vbox.getChildren().addAll(typeBox, roleBox);
-                    registerButton.setOnAction(ev -> {
-                        System.out.println("Name: " + nameTextField.getText());
-                        System.out.println("Phone: " + phoneTextField.getText());
-                        System.out.println("Age: " + Integer.parseInt(ageField.getText()));
-                        System.out.println("Address: " + addressTextField.getText());
-                        System.out.println("Salary: " + Double.parseDouble(salaryField.getText()));
-                        System.out.println("Role: " + roleCb.getValue());
-                        System.out.println("Type: " + typeCb.getValue());
-                        if (nameTextField.getText().trim().isEmpty()) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error, name can not be null.");
-                        } else if (phoneTextField.getText().trim().isEmpty()) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error, phone can not be null.");
-                        } else if (addressTextField.getText().trim().isEmpty()) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error, address can not be null.");
-                        } else if (roleCb.getValue() == null) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error, role can not be null.");
-                        } else if (typeCb.getValue() == null) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error, type can not be null.");
-                        } else {
-                            hrApp.add(new Doctor(0, nameTextField.getText(), sexCb.getValue(),
-                                    Integer.parseInt(ageField.getText()), phoneTextField.getText(),
-                                    Double.parseDouble(salaryField.getText()), addressTextField.getText(),
-                                    roleCb.getValue(), typeCb.getValue()));
-                            secondStage.close();
-                        }
-
-                    });
                 } else if (cb.getValue() == "Nurse") {
                     label.setText("Nurse");
                     typeCb.setItems(FXCollections.observableArrayList(Nurse.TYPES));
                     roleCb.setItems(FXCollections.observableArrayList(Nurse.ROLES));
                     vbox.getChildren().addAll(typeBox, roleBox);
-                    registerButton.setOnAction(ev -> {
-                        System.out.println("Name: " + nameTextField.getText());
-                        System.out.println("Phone: " + phoneTextField.getText());
-                        System.out.println("Age: " + Integer.parseInt(ageField.getText()));
-                        System.out.println("Address: " + addressTextField.getText());
-                        System.out.println("Salary: " + Double.parseDouble(salaryField.getText()));
-                        System.out.println("Role: " + roleCb.getValue());
-                        System.out.println("Type: " + typeCb.getValue());
-                        if (nameTextField.getText().trim().isEmpty()) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error, Name can not be null.");
-                        } else if (phoneTextField.getText().trim().isEmpty()) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error, phone can not be null.");
-                        } else if (addressTextField.getText().trim().isEmpty()) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error, address can not be null.");
-                        } else if (roleCb.getValue() == null) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error, role can not be null.");
-                        } else if (typeCb.getValue() == null) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error, type can not be null.");
-                        } else {
-                            hrApp.add(new Doctor(0, nameTextField.getText(), sexCb.getValue(),
-                                    Integer.parseInt(ageField.getText()), phoneTextField.getText(),
-                                    Double.parseDouble(salaryField.getText()), addressTextField.getText(),
-                                    roleCb.getValue(), typeCb.getValue()));
-                            secondStage.close();
-                        }
-
-                    });
                 } else if (cb.getValue() == "Staff") {
                     label.setText("Staff");
                     typeCb.setItems(FXCollections.observableArrayList(Staff.TYPES));
                     vbox.getChildren().addAll(typeBox);
-                    registerButton.setOnAction(ev -> {
-                        System.out.println("Name: " + nameTextField.getText());
-                        System.out.println("Phone: " + phoneTextField.getText());
-                        System.out.println("Age: " + Integer.parseInt(ageField.getText()));
-                        System.out.println("Address: " + addressTextField.getText());
-                        System.out.println("Salary: " + Double.parseDouble(salaryField.getText()));
-                        System.out.println("Role: " + roleCb.getValue());
-                        System.out.println("Type: " + typeCb.getValue());
-                        if (nameTextField.getText().trim().isEmpty()) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error！！！ name can not be null.");
-                        } else if (phoneTextField.getText().trim().isEmpty()) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error！！！ phone can not be null.");
-                        } else if (addressTextField.getText().trim().isEmpty()) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error！！！ address can not be null.");
-                        } else if (typeCb.getValue() == null) {
-                            tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error！！！ type can not be null.");
-                        } else {
-                            hrApp.add(new Doctor(0, nameTextField.getText(), sexCb.getValue(),
-                                    Integer.parseInt(ageField.getText()), phoneTextField.getText(),
-                                    Double.parseDouble(salaryField.getText()), addressTextField.getText(),
-                                    roleCb.getValue(), typeCb.getValue()));
-                        }
-
-                    });
                 }
+
+                registerButton.setOnAction(evt -> registerButtonActionProcess.eventProcess(evt));
 
                 vbox.getChildren().add(registerButton);
 
