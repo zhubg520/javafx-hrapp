@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 public class HRApp {
   
     private final ObservableList<Employee> employees = FXCollections.observableArrayList();
+    final static String[] SEX = { "Male", "Female", "Other" };
 
     boolean add(Employee employee) {
         try {

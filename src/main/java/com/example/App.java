@@ -1,6 +1,5 @@
 package com.example;
 
-
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
@@ -32,7 +31,6 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
-
 
 class IDCell<S, T> implements Callback<TableColumn<S, T>, TableCell<S, T>> {
 
@@ -92,7 +90,6 @@ public class App extends Application {
             }
         };
 
-
         StringConverter<Integer> intConverter = new StringConverter<Integer>() {
 
             @Override
@@ -140,13 +137,12 @@ public class App extends Application {
 
         TableColumn<Employee, String> sexCol = new TableColumn<>("Sex");
         sexCol.setCellValueFactory(new PropertyValueFactory<>("sex"));
-        sexCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        sexCol.setCellFactory(ComboBoxTableCell.forTableColumn(Employee.SEX));
-
+        // sexCol.setEditable(true);
+        sexCol.setCellFactory(ComboBoxTableCell.forTableColumn(HRApp.SEX));
         sexCol.setOnEditCommit(evt -> {
-            System.out.println("evt.getNewValue(): "+ evt.getNewValue());
+            System.out.println("evt.getNewValue(): " + evt.getRowValue().toString());
             Employee temp = evt.getRowValue();
-            temp.setName(evt.getNewValue());
+            temp.setSex(evt.getNewValue());
             hrApp.update(evt.getRowValue().getId(), temp);
             table.refresh();
         });
@@ -242,7 +238,6 @@ public class App extends Application {
             table.refresh();
         });
 
-
         TableColumn<Employee, Double> salaryCol = new TableColumn<>("Salary");
         salaryCol.setCellValueFactory(new PropertyValueFactory<>("salary"));
 
@@ -254,7 +249,6 @@ public class App extends Application {
             hrApp.update(evt.getRowValue().getId(), temp);
             table.refresh();
         });
-
 
         TableColumn<Employee, String> addressCol = new TableColumn<>("Address");
         addressCol.setCellValueFactory(new PropertyValueFactory<>("address"));
@@ -280,7 +274,6 @@ public class App extends Application {
                 20000.00, "Sheffield", "porters");
         hrApp.add(staff);
 
-
         table.setItems(hrApp.getAll());
 
         Label tipLabel = new Label("Tips:");
@@ -303,7 +296,7 @@ public class App extends Application {
             System.out.println(cb.getValue());
             if (cb.getValue() == null) {
                 tipTextField.setStyle("-fx-text-fill: red;");
-                tipTextField.setText("Error ！！！ Please select the employee type.");
+                tipTextField.setText("Error! Please select the employee type.");
             } else {
                 Stage secondStage = new Stage();
                 secondStage.setTitle("Add Employee");
@@ -456,7 +449,7 @@ public class App extends Application {
                         System.out.println("Type: " + typeCb.getValue());
                         if (nameTextField.getText().trim().isEmpty()) {
                             tipTextField1.setStyle("-fx-text-fill: red;");
-                            tipTextField1.setText("Error ！！！ Name can not be null.");
+                            tipTextField1.setText("Error, Name can not be null.");
                         } else if (phoneTextField.getText().trim().isEmpty()) {
                             tipTextField1.setStyle("-fx-text-fill: red;");
                             tipTextField1.setText("Error, phone can not be null.");
@@ -546,6 +539,12 @@ public class App extends Application {
             TextField nameTextField = new TextField();
             nameTextField.setMaxWidth(250);
 
+            Label sexLabel = new Label("Sex:");
+            sexLabel.setTextFill(Color.BLACK);
+            sexLabel.setFont(Font.font("Arial", 15));
+            ChoiceBox<String> sexCb = new ChoiceBox<String>();
+            sexCb.setItems(FXCollections.observableArrayList("Male", "Female", "Other"));
+
             Label phoneLabel = new Label("Phone:");
             phoneLabel.setTextFill(Color.BLACK);
             phoneLabel.setFont(Font.font("Arial", 15));
@@ -600,6 +599,7 @@ public class App extends Application {
             searchButton1.setFont(Font.font("Arial", 15));
             searchButton1.setOnAction(ev -> {
                 System.out.println("Name: " + nameTextField.getText());
+                System.out.println("Sex: " + sexCb.getValue());
                 System.out.println("Phone: " + phoneTextField.getText());
                 System.out.println("Age: " + Integer.parseInt(ageField.getText()));
                 System.out.println("Address: " + addressTextField.getText());
@@ -609,6 +609,7 @@ public class App extends Application {
                 employeesTemp.clear();
                 System.out.println(employeesTemp.size());
                 if (nameTextField.getText().trim().isEmpty() &&
+                        sexCb.getValue() == null &&
                         phoneTextField.getText().trim().isEmpty() &&
                         addressTextField.getText().trim().isEmpty() &&
                         Integer.parseInt(ageField.getText()) == 0 &&
@@ -633,6 +634,7 @@ public class App extends Application {
                         Boolean salaryMatch = false;
                         Boolean roleMatch = false;
                         Boolean typeMatch = false;
+                        Boolean sexMatch = false;
 
                         if (!nameTextField.getText().trim().isEmpty()) {
                             if (hrApp.get(i).getName().contains(nameTextField.getText().trim())) {
@@ -674,6 +676,16 @@ public class App extends Application {
                             addressMatch = true;
                         }
 
+                        if (sexCb.getValue() != null) {
+                            Employee temp = hrApp.get(i);
+
+                            if (temp.getSex() == sexCb.getValue()) {
+                                sexMatch = true;
+                            }
+                        } else {
+                            sexMatch = true;
+                        }
+
                         if (roleCb.getValue() != null) {
                             if (hrApp.get(i) instanceof Doctor) {
                                 Doctor temp = (Doctor) hrApp.get(i);
@@ -713,14 +725,13 @@ public class App extends Application {
                             typeMatch = true;
                         }
 
-                        if (nameMatch && phoneMatch && ageMatch && addressMatch && salaryMatch && roleMatch
+                        if (nameMatch && sexMatch && phoneMatch && ageMatch && addressMatch && salaryMatch && roleMatch
                                 && typeMatch) {
                             System.out.println(hrApp.get(i).toString());
                             employeesTemp.add(hrApp.get(i));
                         }
                     }
                 }
-
 
             });
 
@@ -760,6 +771,7 @@ public class App extends Application {
 
             clearButton.setOnAction(ev -> {
                 nameTextField.setText("");
+                sexCb.setValue(null);
                 phoneTextField.setText("");
                 addressTextField.setText("");
                 ageField.setText("0");
@@ -779,35 +791,39 @@ public class App extends Application {
             idCol1.setCellFactory(new IDCell<>());
 
             TableColumn<Employee, String> nameCol1 = new TableColumn<>("Name");
-            nameCol1.setCellValueFactory(new PropertyValueFactory<>("Name"));
+            nameCol1.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+            TableColumn<Employee, String> sexCol1 = new TableColumn<>("Sex");
+            sexCol1.setCellValueFactory(new PropertyValueFactory<>("sex"));
 
             TableColumn<Employee, String> typeCol1 = new TableColumn<>("Type");
-            typeCol1.setCellValueFactory(new PropertyValueFactory<>("Type"));
+            typeCol1.setCellValueFactory(new PropertyValueFactory<>("type"));
 
             TableColumn<Employee, String> roleCol1 = new TableColumn<>("Role");
-            roleCol1.setCellValueFactory(new PropertyValueFactory<>("Role"));
+            roleCol1.setCellValueFactory(new PropertyValueFactory<>("role"));
 
             TableColumn<Employee, String> phoneCol1 = new TableColumn<>("Phone");
-            phoneCol1.setCellValueFactory(new PropertyValueFactory<>("Phone"));
+            phoneCol1.setCellValueFactory(new PropertyValueFactory<>("phone"));
 
             TableColumn<Employee, Integer> ageCol1 = new TableColumn<>("Age");
-            ageCol1.setCellValueFactory(new PropertyValueFactory<>("Age"));
+            ageCol1.setCellValueFactory(new PropertyValueFactory<>("age"));
 
             TableColumn<Employee, Double> salaryCol1 = new TableColumn<>("Salary");
-            salaryCol1.setCellValueFactory(new PropertyValueFactory<>("Salary"));
+            salaryCol1.setCellValueFactory(new PropertyValueFactory<>("salary"));
 
             TableColumn<Employee, String> addressCol1 = new TableColumn<>("Address");
-            addressCol1.setCellValueFactory(new PropertyValueFactory<>("Address"));
+            addressCol1.setCellValueFactory(new PropertyValueFactory<>("address"));
 
-            table1.getColumns().addAll(idCol1, nameCol1, typeCol1, roleCol1, phoneCol1, ageCol1, salaryCol1,
+            table1.getColumns().addAll(idCol1, nameCol1, sexCol1, typeCol1, roleCol1, phoneCol1, ageCol1, salaryCol1,
                     addressCol1);
             VBox searchVbox = new VBox(10);
             HBox searchHbox = new HBox(10);
             searchHbox.setAlignment(Pos.CENTER);
-            searchHbox.getChildren().addAll(nameLabel, nameTextField, phoneLabel, phoneTextField, ageLabel, ageField);
+            searchHbox.getChildren().addAll(nameLabel, nameTextField, sexLabel, sexCb, phoneLabel, phoneTextField);
             HBox searchHbox1 = new HBox(10);
             searchHbox1.setAlignment(Pos.CENTER);
-            searchHbox1.getChildren().addAll(addressLabel, addressTextField, salaryLabel, salaryField);
+            searchHbox1.getChildren().addAll(addressLabel, addressTextField, salaryLabel, salaryField, ageLabel,
+                    ageField);
             HBox searchhbox2 = new HBox(10);
             searchhbox2.setAlignment(Pos.CENTER);
             searchhbox2.getChildren().addAll(searchCbLabel, searchCb, roleBox, typeBox);
@@ -817,7 +833,6 @@ public class App extends Application {
 
             searchVbox.setAlignment(Pos.CENTER);
             searchVbox.getChildren().addAll(tipBox2, searchHbox, searchHbox1, searchhbox2, searchhbox3, table1);
-
 
             Scene searchScene = new Scene(searchVbox, 800, 600);
             searchScene.getRoot().setStyle("-fx-font-family: 'serif'");
