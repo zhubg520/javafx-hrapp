@@ -8,7 +8,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -295,9 +294,7 @@ public class App extends Application {
         cbLabel.setFont(Font.font("Arial", 15));
         ChoiceBox<String> cb = new ChoiceBox<String>(FXCollections.observableArrayList("Doctor", "Nurse", "Staff"));
 
-        Button addButton = new Button("Add Employee");
-        addButton.setFont(Font.font("Arial", 15));
-        addButton.setOnAction(e -> {
+        CommonEventHandler addButtonEventHandler = e -> {
             System.out.println(cb.getValue());
             if (cb.getValue() == null) {
                 tipTextField.setStyle("-fx-text-fill: red;");
@@ -413,7 +410,7 @@ public class App extends Application {
                     if (nameTextField.getText().trim().isEmpty()) {
                         tipTextField1.setStyle("-fx-text-fill: red;");
                         tipTextField1.setText("Error, name can not be null.");
-                    }else if (sexCb.getValue() == null) {
+                    } else if (sexCb.getValue() == null) {
                         tipTextField1.setStyle("-fx-text-fill: red;");
                         tipTextField1.setText("Error, sex can not be null.");
                     } else if (phoneTextField.getText().trim().isEmpty()) {
@@ -476,11 +473,13 @@ public class App extends Application {
                 secondStage.setScene(secondScene);
                 secondStage.show();
             }
-        });
+        };
 
-        Button searchButton = new Button("Search Employee");
-        searchButton.setFont(Font.font("Arial", 15));
-        searchButton.setOnAction(e -> {
+        Button addButton = new Button("Add Employee");
+        addButton.setFont(Font.font("Arial", 15));
+        addButton.setOnAction(evt -> addButtonEventHandler.eventProcess(evt));
+
+        CommonEventHandler searchEventHandler = e -> {
             Stage searchStage = new Stage();
             searchStage.setTitle("Search Employee");
 
@@ -802,7 +801,11 @@ public class App extends Application {
             searchScene.getRoot().setStyle("-fx-font-family: 'serif'");
             searchStage.setScene(searchScene);
             searchStage.show();
-        });
+        };
+
+        Button searchButton = new Button("Search Employee");
+        searchButton.setFont(Font.font("Arial", 15));
+        searchButton.setOnAction(evt -> searchEventHandler.eventProcess(evt));
 
         HBox tipBox = new HBox(10);
         HBox hBox = new HBox(10);
