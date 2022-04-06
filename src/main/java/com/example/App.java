@@ -13,6 +13,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
@@ -819,7 +822,19 @@ public class App extends Application {
         tipBox.getChildren().addAll(tipLabel, tipTextField);
         hBox.getChildren().addAll(cb, addButton);
 
-        root.getChildren().addAll(tipBox, table, hBox, romoveButton, searchButton);
+        Menu mainMenu = new Menu("Main");
+
+        MenuBar menuBar = new MenuBar();
+        MenuItem menuItem1 = new MenuItem("Search");
+        MenuItem menuItem2 = new MenuItem("Exit");
+        menuItem1.setOnAction(evt -> searchEventHandler.eventProcess(evt));
+        menuItem2.setOnAction(evt -> stage.close());
+        mainMenu.getItems().add(menuItem1);
+        mainMenu.getItems().add(menuItem2);
+
+        menuBar.getMenus().add(mainMenu);
+
+        root.getChildren().addAll(menuBar, tipBox, table, hBox, romoveButton, searchButton);
 
         Scene scene = new Scene(root, 800, 600, Color.YELLOW);
         scene.getRoot().setStyle("-fx-font-family: 'serif'");
