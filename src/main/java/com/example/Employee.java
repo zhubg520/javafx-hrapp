@@ -8,14 +8,14 @@ package com.example;
  */
 
 public abstract class Employee implements ToString {
-    int id;
-    String name;
-    String sex;
-    int age;
-    String phone;
-    double salary;
-    String address;
-    final static String[] SEX = { "Male", "Female", "Other" };
+    public int id;
+    public String name;
+    public String sex;
+    public int age;
+    public String phone;
+    public double salary;
+    public String address;
+    public final static String[] SEX = { "Male", "Female", "Other" };
 
     public Employee(int id, String name, String sex, int age, String phone, double salary, String address) {
         this.id = id;

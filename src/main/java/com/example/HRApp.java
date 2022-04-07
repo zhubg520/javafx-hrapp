@@ -22,7 +22,7 @@ public class HRApp {
      * @return Return true on success, false on failure
      */
 
-    boolean add(Employee employee) {
+    public boolean add(Employee employee) {
         try {
             employee.setId(this.employees.size());
             this.employees.add(employee);
@@ -41,7 +41,7 @@ public class HRApp {
      * @return Return true on success, false on failure
      */
 
-    boolean remove(int index) {
+    public boolean remove(int index) {
         try {
             this.employees.remove(index);
             return true;
@@ -59,7 +59,7 @@ public class HRApp {
      * @return Return true on success, false on failure
      */
 
-    boolean update(int index, Employee employee) {
+    public boolean update(int index, Employee employee) {
         try {
             this.employees.set(index, employee);
             return true;
@@ -77,7 +77,7 @@ public class HRApp {
      * @return An object of Employee subclass Doctor, Nurse or Staff
      */
 
-    Employee get(int index) {
+    public Employee get(int index) {
         try {
             return this.employees.get(index);
         } catch (Error e) {
@@ -93,7 +93,7 @@ public class HRApp {
      * @return The ObservableList employees
      */
 
-    ObservableList<Employee> getAll() {
+    public ObservableList<Employee> getAll() {
         return this.employees;
     }
 

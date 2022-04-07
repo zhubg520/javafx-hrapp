@@ -9,8 +9,8 @@ package com.example;
 
 public class Doctor extends Employee {
 
-    String role;
-    static final String[] ROLES = {
+    public String role;
+    public static final String[] ROLES = {
             "Family physicians",
             "Internists",
             "Emergency physicians",
@@ -22,8 +22,8 @@ public class Doctor extends Employee {
     };
 
 
-    String type;
-    static final String[] TYPES = {
+    public String type;
+    public static final String[] TYPES = {
             "senior consultants",
             "registrars",
             "residents",

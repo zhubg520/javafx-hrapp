@@ -9,9 +9,13 @@ package com.example;
 
 public class Staff extends Employee {
 
-    String role = "";
-    String type;
-    static final String[] TYPES = {
+    /**
+     * no use, only for javafx table
+     * 
+     */
+    public String role = "";
+    public String type;
+    public static final String[] TYPES = {
             "clinical assistants",
             "patient services assistants",
             "porters",
@@ -24,6 +28,10 @@ public class Staff extends Employee {
         this.type = type;
     }
 
+    /**
+     * no use, only for javafx table
+     * 
+     */
     public String getRole() {
         return role;
     }

@@ -8,8 +8,8 @@ package com.example;
  */
 
 public class Nurse extends Employee {
-    String role;
-    static final String[] ROLES = {
+    public String role;
+    public static final String[] ROLES = {
             "Registered Nurses",
             "Radiology Nurses",
             "Public Health Nurses",
@@ -21,8 +21,8 @@ public class Nurse extends Employee {
             "Rehabilitation Nurses",
     };
 
-    String type;
-    static final String[] TYPES = {
+    public String type;
+    public static final String[] TYPES = {
             "nurse unit manager",
             "associate nurse unit manager",
             "nurse practitioners",
