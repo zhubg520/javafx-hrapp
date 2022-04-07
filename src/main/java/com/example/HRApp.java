@@ -3,10 +3,24 @@ package com.example;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+/**
+ * Class for human resouce system
+ * 
+ * @author Wenjing Ma
+ * @version 1.0
+ */
+
 public class HRApp {
-  
+
     private final ObservableList<Employee> employees = FXCollections.observableArrayList();
-    final static String[] SEX = { "Male", "Female", "Other" };
+
+    /**
+     * Add a subclass object of abstract class Employee to ObservableList employees
+     * 
+     * @param employee Employee to add, A、an object of Employee subclass Doctor,
+     *                 Nurse or Staff
+     * @return Return true on success, false on failure
+     */
 
     boolean add(Employee employee) {
         try {
@@ -20,6 +34,13 @@ public class HRApp {
         }
     }
 
+    /**
+     * Remove a employee from ObservableList employees
+     * 
+     * @param index The index of an element of the ObservableList employees
+     * @return Return true on success, false on failure
+     */
+
     boolean remove(int index) {
         try {
             this.employees.remove(index);
@@ -30,6 +51,13 @@ public class HRApp {
             return false;
         }
     }
+
+    /**
+     * Update a employee from ObservableList employees
+     * 
+     * @param index The index of an element of the ObservableList employees
+     * @return Return true on success, false on failure
+     */
 
     boolean update(int index, Employee employee) {
         try {
@@ -42,6 +70,13 @@ public class HRApp {
         }
     }
 
+    /**
+     * Get a employee from ObservableList employees
+     * 
+     * @param index The index of an element of the ObservableList employees
+     * @return An object of Employee subclass Doctor, Nurse or Staff
+     */
+
     Employee get(int index) {
         try {
             return this.employees.get(index);
@@ -51,6 +86,12 @@ public class HRApp {
             throw e;
         }
     }
+
+    /**
+     * Get the ObservableList employees, all employees
+     * 
+     * @return The ObservableList employees
+     */
 
     ObservableList<Employee> getAll() {
         return this.employees;

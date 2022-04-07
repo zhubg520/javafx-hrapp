@@ -1,5 +1,12 @@
 package com.example;
 
+/**
+ * Class for nurse
+ * 
+ * @author Wenjing Ma
+ * @version 1.0
+ */
+
 public class Nurse extends Employee {
     String role;
     static final String[] ROLES = {

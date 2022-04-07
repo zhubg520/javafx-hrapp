@@ -36,9 +36,23 @@ import javafx.util.StringConverter;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 
+/**
+ * Interface for common event handler
+ * 
+ * @author Wenjing Ma
+ * @version 1.0
+ */
+
 interface CommonEventHandler {
     void eventProcess(ActionEvent e);
 }
+
+/**
+ * Class for javafx auto increase indexes TableCell in TableView
+ * 
+ * @author Wenjing Ma
+ * @version 1.0
+ */
 
 class IDCell<S, T> implements Callback<TableColumn<S, T>, TableCell<S, T>> {
 
@@ -62,14 +76,28 @@ class IDCell<S, T> implements Callback<TableColumn<S, T>, TableCell<S, T>> {
     }
 }
 
-// Test
+/**
+ * Class for javafx GUI Application
+ * 
+ * @author Wenjing Ma
+ * @version 1.0
+ */
+
 public class App extends Application {
     private HRApp hrApp = new HRApp();
 
+    /**
+     * Variable to record the index of the selected row
+     * 
+     */
     private int tableSelectIndex = -1;
 
     public void start(Stage stage) {
 
+        /**
+         * Regular expression for detecting numbers
+         * 
+         */
         Pattern validEditingState = Pattern.compile("-?(([1-9][0-9]*)|0)?(\\.[0-9]*)?");
 
         UnaryOperator<TextFormatter.Change> filter = c -> {
@@ -81,6 +109,10 @@ public class App extends Application {
             }
         };
 
+        /**
+         * Convert String to double
+         * 
+         */
         StringConverter<Double> doubleConverter = new StringConverter<Double>() {
 
             @Override
@@ -98,6 +130,10 @@ public class App extends Application {
             }
         };
 
+        /**
+         * Convert String to Integer
+         * 
+         */
         StringConverter<Integer> intConverter = new StringConverter<Integer>() {
 
             @Override
@@ -115,7 +151,10 @@ public class App extends Application {
             }
         };
 
-        // Part of remove function
+        /**
+         * Remove a employee from hrApp
+         * 
+         */
         Button romoveButton = new Button("Romove Employee");
         romoveButton.setFont(Font.font("Arial", 15));
         romoveButton.setDisable(true);
@@ -127,6 +166,10 @@ public class App extends Application {
             romoveButton.setDisable(true);
         });
 
+        /**
+         * Table used to display all employees
+         * 
+         */
         TableView<Employee> table = new TableView<>();
         table.setEditable(true);
 
@@ -147,7 +190,7 @@ public class App extends Application {
         TableColumn<Employee, String> sexCol = new TableColumn<>("Sex");
         sexCol.setCellValueFactory(new PropertyValueFactory<>("sex"));
         // sexCol.setEditable(true);
-        sexCol.setCellFactory(ComboBoxTableCell.forTableColumn(HRApp.SEX));
+        sexCol.setCellFactory(ComboBoxTableCell.forTableColumn(Employee.SEX));
         sexCol.setOnEditCommit(evt -> {
             System.out.println("evt.getNewValue(): " + evt.getRowValue().toString());
             Employee temp = evt.getRowValue();
@@ -181,31 +224,6 @@ public class App extends Application {
 
         TableColumn<Employee, String> roleCol = new TableColumn<>("Role");
         roleCol.setCellValueFactory(new PropertyValueFactory<>("role"));
-
-        table.setRowFactory(tv -> {
-            TableRow row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (!row.isEmpty()) {
-                    System.out.println(row.getIndex());
-                    Employee rowData = (Employee) row.getItem();
-                    tableSelectIndex = row.getIndex();
-                    romoveButton.setDisable(false);
-                    if (rowData instanceof Doctor) {
-                        roleCol.setEditable(true);
-                        roleCol.setCellFactory(ComboBoxTableCell.forTableColumn(Doctor.ROLES));
-                        typeCol.setCellFactory(ComboBoxTableCell.forTableColumn(Doctor.TYPES));
-                    } else if (rowData instanceof Nurse) {
-                        roleCol.setEditable(true);
-                        roleCol.setCellFactory(ComboBoxTableCell.forTableColumn(Nurse.ROLES));
-                        typeCol.setCellFactory(ComboBoxTableCell.forTableColumn(Nurse.TYPES));
-                    } else if (rowData instanceof Staff) {
-                        roleCol.setEditable(false);
-                        typeCol.setCellFactory(ComboBoxTableCell.forTableColumn(Staff.TYPES));
-                    }
-                }
-            });
-            return row;
-        });
 
         roleCol.setOnEditCommit(evt -> {
             System.out.println("roleCol.getRowValue().getId():");
@@ -269,8 +287,58 @@ public class App extends Application {
             table.refresh();
         });
 
+        table.setRowFactory(tv -> {
+            TableRow<Employee> row = new TableRow<>();
+            /**
+             * Handle the row click event of the table
+             * 
+             */
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty()) {
+                    System.out.println(row.getIndex());
+                    Employee rowData = (Employee) row.getItem();
+                    tableSelectIndex = row.getIndex();
+                    romoveButton.setDisable(false);
+                    /**
+                     * If the clicked row of the table is a Doctor object, change the role and type
+                     * ComboBox to Doctor.ROLES and Doctor.TYPES
+                     * 
+                     */
+                    if (rowData instanceof Doctor) {
+                        roleCol.setEditable(true);
+                        roleCol.setCellFactory(ComboBoxTableCell.forTableColumn(Doctor.ROLES));
+                        typeCol.setCellFactory(ComboBoxTableCell.forTableColumn(Doctor.TYPES));
+                    }
+                    /**
+                     * If the clicked row of the table is a Nurse object, change the role and type
+                     * ComboBox to Nurse.ROLES and Nurse.TYPES
+                     * 
+                     */
+                    else if (rowData instanceof Nurse) {
+                        roleCol.setEditable(true);
+                        roleCol.setCellFactory(ComboBoxTableCell.forTableColumn(Nurse.ROLES));
+                        typeCol.setCellFactory(ComboBoxTableCell.forTableColumn(Nurse.TYPES));
+                    }
+                    /**
+                     * If the clicked row of the table is a Staff object, change type
+                     * ComboBox to Staff.TYPES and change role ComboBox editable state to false
+                     * 
+                     */
+                    else if (rowData instanceof Staff) {
+                        roleCol.setEditable(false);
+                        typeCol.setCellFactory(ComboBoxTableCell.forTableColumn(Staff.TYPES));
+                    }
+                }
+            });
+            return row;
+        });
+
         table.getColumns().addAll(idCol, nameCol, sexCol, typeCol, roleCol, phoneCol, ageCol, salaryCol, addressCol);
 
+        /**
+         * Add demo data to hrApp
+         * 
+         */
         Doctor doctor = new Doctor(1, "John", "Male", 31, "1011", 20000.00, "Sheffield",
                 "Family physicians", "Registrars");
         hrApp.add(doctor);
@@ -285,6 +353,10 @@ public class App extends Application {
 
         table.setItems(hrApp.getAll());
 
+        /**
+         * Show tips information
+         * 
+         */
         Label tipLabel = new Label("Tips:");
         tipLabel.setTextFill(Color.BLACK);
         tipLabel.setFont(Font.font("Arial", 15));
@@ -299,6 +371,10 @@ public class App extends Application {
         cbLabel.setFont(Font.font("Arial", 15));
         ChoiceBox<String> cb = new ChoiceBox<String>(FXCollections.observableArrayList("Doctor", "Nurse", "Staff"));
 
+        /**
+         * Functional Interfaces to open a new window for add a employee to hrApp
+         * 
+         */
         CommonEventHandler addButtonEventHandler = e -> {
             System.out.println(cb.getValue());
             if (cb.getValue() == null) {
@@ -404,8 +480,14 @@ public class App extends Application {
                 vbox.setAlignment(Pos.CENTER);
                 vbox.getChildren().addAll(tipBox1, label, nameBox, sexBox, phoneBox, ageBox, addressBox, salaryBox);
 
+                /**
+                 * Functional Interfaces to add a subclass Doctor,
+                 * Nurse or Staff object of abstract class Employee to hrApp
+                 * 
+                 */
                 CommonEventHandler registerButtonActionProcess = ev -> {
                     System.out.println("Name: " + nameTextField.getText());
+                    System.out.println("Sex: " + sexCb.getValue());
                     System.out.println("Phone: " + phoneTextField.getText());
                     System.out.println("Age: " + Integer.parseInt(ageField.getText()));
                     System.out.println("Address: " + addressTextField.getText());
@@ -484,6 +566,10 @@ public class App extends Application {
         addButton.setFont(Font.font("Arial", 15));
         addButton.setOnAction(evt -> addButtonEventHandler.eventProcess(evt));
 
+        /**
+         * Functional Interfaces to open a new window for search the employees in hrApp
+         * 
+         */
         CommonEventHandler searchEventHandler = e -> {
             Stage searchStage = new Stage();
             searchStage.setTitle("Search Employee");
@@ -576,6 +662,11 @@ public class App extends Application {
                 System.out.println("Type: " + typeCb.getValue());
                 employeesTemp.clear();
                 System.out.println(employeesTemp.size());
+
+                /**
+                 * If all search options are empty, show all employees
+                 * 
+                 */
                 if (nameTextField.getText().trim().isEmpty() &&
                         sexCb.getValue() == null &&
                         phoneTextField.getText().trim().isEmpty() &&
@@ -588,13 +679,10 @@ public class App extends Application {
                 } else {
                     for (int i = 0; i < hrApp.getAll().size(); i++) {
 
-                        System.out.print("Doctor: ");
-                        System.out.println(hrApp.get(i) instanceof Doctor);
-                        System.out.print("Nurse: ");
-                        System.out.println(hrApp.get(i) instanceof Nurse);
-                        System.out.print("Staff: ");
-                        System.out.println(hrApp.get(i) instanceof Staff);
-
+                        /**
+                         * Set the initial search condition match detection value to false
+                         * 
+                         */
                         Boolean nameMatch = false;
                         Boolean phoneMatch = false;
                         Boolean ageMatch = false;
@@ -604,6 +692,10 @@ public class App extends Application {
                         Boolean typeMatch = false;
                         Boolean sexMatch = false;
 
+                        /**
+                         * All employees whose name field contains the search value will be searched
+                         * 
+                         */
                         if (!nameTextField.getText().trim().isEmpty()) {
                             if (hrApp.get(i).getName().contains(nameTextField.getText().trim())) {
                                 nameMatch = true;
@@ -612,6 +704,10 @@ public class App extends Application {
                             nameMatch = true;
                         }
 
+                        /**
+                         * All employees whose phone field contains the search value will be searched
+                         * 
+                         */
                         if (!phoneTextField.getText().trim().isEmpty()) {
                             if (hrApp.get(i).getPhone().contains(phoneTextField.getText().trim())) {
                                 phoneMatch = true;
@@ -620,6 +716,10 @@ public class App extends Application {
                             phoneMatch = true;
                         }
 
+                        /**
+                         * All employees whose age field equal the search value will be searched
+                         * 
+                         */
                         if (Integer.parseInt(ageField.getText()) != 0) {
                             if (hrApp.get(i).getAge() == Integer.parseInt(ageField.getText())) {
                                 ageMatch = true;
@@ -628,6 +728,10 @@ public class App extends Application {
                             ageMatch = true;
                         }
 
+                        /**
+                         * All employees whose salary field equal the search value will be searched
+                         * 
+                         */
                         if (Double.parseDouble(salaryField.getText()) != 0) {
                             if (hrApp.get(i).getSalary() == Double.parseDouble(salaryField.getText())) {
                                 salaryMatch = true;
@@ -636,6 +740,10 @@ public class App extends Application {
                             salaryMatch = true;
                         }
 
+                        /**
+                         * All employees whose address field contains the search value will be searched
+                         * 
+                         */
                         if (!addressTextField.getText().trim().isEmpty()) {
                             if (hrApp.get(i).getAddress().contains(addressTextField.getText().trim())) {
                                 addressMatch = true;
@@ -644,6 +752,10 @@ public class App extends Application {
                             addressMatch = true;
                         }
 
+                        /**
+                         * All employees whose sex field equal the search value will be searched
+                         * 
+                         */
                         if (sexCb.getValue() != null) {
                             Employee temp = hrApp.get(i);
 
@@ -654,6 +766,10 @@ public class App extends Application {
                             sexMatch = true;
                         }
 
+                        /**
+                         * All employees whose role field equal the search value will be searched
+                         * 
+                         */
                         if (roleCb.getValue() != null) {
                             if (hrApp.get(i) instanceof Doctor) {
                                 Doctor temp = (Doctor) hrApp.get(i);
@@ -672,6 +788,10 @@ public class App extends Application {
                             roleMatch = true;
                         }
 
+                        /**
+                         * All employees whose type field equal the search value will be searched
+                         * 
+                         */
                         if (typeCb.getValue() != null) {
                             if (hrApp.get(i) instanceof Doctor) {
                                 Doctor temp = (Doctor) hrApp.get(i);
@@ -693,6 +813,10 @@ public class App extends Application {
                             typeMatch = true;
                         }
 
+                        /**
+                         * If there are multiple search criteria, all must be true to be searched
+                         * 
+                         */
                         if (nameMatch && sexMatch && phoneMatch && ageMatch && addressMatch && salaryMatch && roleMatch
                                 && typeMatch) {
                             System.out.println(hrApp.get(i).toString());
@@ -737,6 +861,10 @@ public class App extends Application {
             Button clearButton = new Button("Clear");
             clearButton.setFont(Font.font("Arial", 15));
 
+            /**
+             * Clear the value of all search criteria
+             * 
+             */
             clearButton.setOnAction(ev -> {
                 nameTextField.setText("");
                 sexCb.setValue(null);
@@ -784,6 +912,7 @@ public class App extends Application {
 
             table1.getColumns().addAll(idCol1, nameCol1, sexCol1, typeCol1, roleCol1, phoneCol1, ageCol1, salaryCol1,
                     addressCol1);
+
             VBox searchVbox = new VBox(10);
             HBox searchHbox = new HBox(10);
             searchHbox.setAlignment(Pos.CENTER);
@@ -823,12 +952,26 @@ public class App extends Application {
         tipBox.getChildren().addAll(tipLabel, tipTextField);
         hBox.getChildren().addAll(cb, addButton);
 
+        /**
+         * add Main menu
+         * 
+         */
         Menu mainMenu = new Menu("Main");
 
         MenuBar menuBar = new MenuBar();
         MenuItem menuItem1 = new MenuItem("Search");
         MenuItem menuItem2 = new MenuItem("Exit");
+
+        /**
+         * Open a new window for search the employees in hrApp
+         * 
+         */
         menuItem1.setOnAction(evt -> searchEventHandler.eventProcess(evt));
+
+        /**
+         * exit the application, close all windows
+         * 
+         */
         menuItem2.setOnAction(evt -> Platform.exit());
         mainMenu.getItems().add(menuItem1);
         mainMenu.getItems().add(menuItem2);

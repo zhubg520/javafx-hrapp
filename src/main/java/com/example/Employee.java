@@ -1,11 +1,12 @@
 package com.example;
 
 /**
- * Abstract class for hospital staff
+ * Abstract class for hospital employee
  * 
  * @author Wenjing Ma
  * @version 1.0
  */
+
 public abstract class Employee implements ToString {
     int id;
     String name;
@@ -14,6 +15,7 @@ public abstract class Employee implements ToString {
     String phone;
     double salary;
     String address;
+    final static String[] SEX = { "Male", "Female", "Other" };
 
     public Employee(int id, String name, String sex, int age, String phone, double salary, String address) {
         this.id = id;

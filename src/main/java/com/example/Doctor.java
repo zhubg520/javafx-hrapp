@@ -1,5 +1,12 @@
 package com.example;
 
+/**
+ * Class for doctor
+ * 
+ * @author Wenjing Ma
+ * @version 1.0
+ */
+
 public class Doctor extends Employee {
 
     String role;
